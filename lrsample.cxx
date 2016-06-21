@@ -23,11 +23,6 @@ CLSID CLSID_SampleWordBreaker = /* d225281a-7ca9-4a46-ae7d-c63a9d4815d4 */
 long g_cInstances = 0;
 HMODULE g_hModule = 0;
 
-// Character width to gram
-const long SHINGLE_ONE = 2;
-const long SHINGLE_TWO = 3;
-const unsigned int SHINGLES[2] = {SHINGLE_ONE, SHINGLE_TWO};
-
 //+---------------------------------------------------------------------------
 //
 //  Member:     CSampleWordBreaker::BreakText
@@ -61,23 +56,29 @@ HRESULT STDMETHODCALLTYPE CSampleWordBreaker::BreakText(
     HRESULT hr = pTextSource->pfnFillTextBuffer( pTextSource );
     do
     {
-        
-        for(int i = 0; i < 1; i++) {
-            int NGRAM_SIZE = SHINGLES[i];
-            long at = 0;
-            while( pTextSource->iCur + at + NGRAM_SIZE <= pTextSource->iEnd ) {
-                hr = pWordSink->PutWord( NGRAM_SIZE,
-                                            &pTextSource->awcBuffer[pTextSource->iCur + at],
-                                            NGRAM_SIZE,
-                                            pTextSource->iCur + at );
-                if ( FAILED( hr ) )
-                return hr;
-                at++;
-            }
+		hr = pWordSink->PutBreak(WORDREP_BREAK_TYPE::WORDREP_BREAK_EOS);
+		if (FAILED(hr)) return hr;
+        int NGRAM_SIZE = 2;
+        long at = 0;
+		while (pTextSource->iCur + at + NGRAM_SIZE <= pTextSource->iEnd) {
+			long pos = pTextSource->iCur + at;
+			hr = pWordSink->PutWord(NGRAM_SIZE,
+				&pTextSource->awcBuffer[pos],
+				NGRAM_SIZE,
+				pos);
+			if (FAILED(hr)) return hr;
+			if (pos + NGRAM_SIZE + 1 <= pTextSource->iEnd) {
+				hr = pWordSink->PutAltWord(NGRAM_SIZE + 1,
+					&pTextSource->awcBuffer[pos],
+					NGRAM_SIZE + 1,
+					pos);
+				if (FAILED(hr)) return hr;
+			}
+            at++;
         }
 
-        if ( FAILED( hr ) )
-          return hr;
+        if ( FAILED( hr ) ) return hr;
+
         hr = pTextSource->pfnFillTextBuffer( pTextSource );
     } while ( SUCCEEDED( hr ) );
 
