@@ -22,6 +22,7 @@
     <ProjectGuid>{891A84FA-420D-485F-A117-43F190015A29}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>sqlngram</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -116,10 +117,7 @@
     <None Include="lrsample.DEF" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="filtreg.hxx" />
-    <ClInclude Include="langreg.hxx" />
     <ClInclude Include="lrsample.HXX" />
-    <ClInclude Include="minici.hxx" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>

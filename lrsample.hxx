@@ -17,8 +17,6 @@
 
 #pragma once
 
-#include "minici.hxx"
-
 extern long g_cInstances;
 
 // Invent a new sublanguage of English -- English Sample
@@ -196,91 +194,3 @@ private:
     //       all were like this
     //
 };
-
-//+---------------------------------------------------------------------------
-//
-//  Class:      CSampleStemmer
-//
-//  Purpose:    Sample stemmer
-//
-//----------------------------------------------------------------------------
-
-class CSampleStemmer : public IStemmer
-{
-public:
-
-    HRESULT STDMETHODCALLTYPE QueryInterface( REFIID  riid,
-                                              void ** ppvObject )
-    {
-        if ( 0 == ppvObject )
-            return E_INVALIDARG;
-    
-        if ( IID_IStemmer == riid )
-            *ppvObject = (IUnknown *)(IStemmer *) this;
-        else if ( IID_IUnknown == riid )
-            *ppvObject = (IUnknown *) this;
-        else
-        {
-            *ppvObject = 0;
-            return E_NOINTERFACE;
-        }
-    
-        AddRef();
-        return S_OK;
-    }
-
-    ULONG STDMETHODCALLTYPE AddRef()
-    {
-        return InterlockedIncrement( &_cRefs );
-    }
-
-    ULONG STDMETHODCALLTYPE Release()
-    {
-        unsigned long c = InterlockedDecrement( &_cRefs );
-
-        if ( 0 == c )
-            delete this;
-
-        return c;
-    }
-
-    HRESULT STDMETHODCALLTYPE Init(
-        ULONG  ulMaxTokenSize,
-        BOOL * pfLicense )
-    {
-        if ( 0 == pfLicense )
-            return E_INVALIDARG;
-
-        *pfLicense = TRUE;
-        return S_OK;
-    }
-
-    HRESULT STDMETHODCALLTYPE GetLicenseToUse( const WCHAR ** ppwcsLicense )
-    {
-        if ( 0 == ppwcsLicense )
-            return E_INVALIDARG;
-
-        *ppwcsLicense = L"Copyright Microsoft, 1991-2001";
-        return S_OK;
-    }
-
-    HRESULT STDMETHODCALLTYPE GenerateWordForms(
-        WCHAR const *   pwcInBuf,
-        ULONG           cwc,
-        IWordFormSink * pWordFormSink );
-
-    CSampleStemmer() : _cRefs( 1 )
-    {
-        InterlockedIncrement( &g_cInstances );
-    }
-
-    ~CSampleStemmer()
-    {
-        InterlockedDecrement( &g_cInstances );
-    }
-
-private:
-
-    long _cRefs;
-};
-
