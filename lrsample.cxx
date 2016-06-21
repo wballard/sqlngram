@@ -24,7 +24,9 @@ long g_cInstances = 0;
 HMODULE g_hModule = 0;
 
 // Character width to gram
-const long NGRAM_SIZE = 3;
+const long SHINGLE_ONE = 2;
+const long SHINGLE_TWO = 3;
+const unsigned int SHINGLES[2] = {SHINGLE_ONE, SHINGLE_TWO};
 
 //+---------------------------------------------------------------------------
 //
@@ -59,14 +61,19 @@ HRESULT STDMETHODCALLTYPE CSampleWordBreaker::BreakText(
     HRESULT hr = pTextSource->pfnFillTextBuffer( pTextSource );
     do
     {
-        long at = 0;
-        while( pTextSource->iCur + at + NGRAM_SIZE <= pTextSource->iEnd ) {
-
-            hr = pWordSink->PutWord( NGRAM_SIZE,
-                                         &pTextSource->awcBuffer[pTextSource->iCur + at],
-                                         NGRAM_SIZE,
-                                         pTextSource->iCur + at );
-            at++;
+        
+        for(int i = 0; i < 1; i++) {
+            int NGRAM_SIZE = SHINGLES[i];
+            long at = 0;
+            while( pTextSource->iCur + at + NGRAM_SIZE <= pTextSource->iEnd ) {
+                hr = pWordSink->PutWord( NGRAM_SIZE,
+                                            &pTextSource->awcBuffer[pTextSource->iCur + at],
+                                            NGRAM_SIZE,
+                                            pTextSource->iCur + at );
+                if ( FAILED( hr ) )
+                return hr;
+                at++;
+            }
         }
 
         if ( FAILED( hr ) )
@@ -93,6 +100,7 @@ HRESULT STDMETHODCALLTYPE CSampleWordBreaker::BreakText(
 
 	return S_OK;
 } //BreakText
+
 
 //+-------------------------------------------------------------------------
 //

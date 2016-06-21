@@ -167,9 +167,8 @@ public:
 private:
 
     HRESULT Tokenize( TEXT_SOURCE * pTextSource,
-                      ULONG         cwc,
                       IWordSink *   pWordSink,
-                      ULONG &       cwcProcd );
+                      long          shingle );
 
     ~CSampleWordBreaker()
     {
