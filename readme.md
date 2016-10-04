@@ -14,3 +14,47 @@ Knowing how much folks just love building C++, I've checked in a built version.
 ```
   SELECT * FROM sys.dm_fts_parser (' "Hello World" ', 1, 0, 0)
 ```
+
+
+##Samples
+```
+USE GLGLIVE
+EXEC sys.sp_cdc_enable_db  
+
+EXEC sys.sp_cdc_enable_table  
+@source_schema = N'dbo',  
+@source_name   = N'COMPANY',  
+@role_name     = NULL,  
+@supports_net_changes = 1 
+
+CREATE FULLTEXT CATALOG GLGLIVE_FULLTEXT
+
+CREATE FULLTEXT INDEX ON dbo.COMPANY
+  (   
+  PRIMARY_NAME  
+      Language 1,   
+  SECONDARY_NAME  
+      Language 1   
+  )  
+  KEY INDEX PK_COMPANY ON GLGLIVE_FULLTEXT WITH STOPLIST = OFF, CHANGE_TRACKING AUTO  
+
+--wait for it ....
+
+SELECT 
+  PRIMARY_NAME, *
+FROM
+  dbo.COMPANY 
+  JOIN CONTAINSTABLE(dbo.COMPANY, (PRIMARY_NAME, SECONDARY_NAME), 'Gerso') ft ON [KEY] = COMPANY_ID
+ORDER BY RANK DESC
+
+--or even, notice the 'words' separated by ~ that's the 'near operator'
+--effectively replace all the spaces in your query with ' ~ '
+
+SELECT 
+  PRIMARY_NAME, *
+FROM
+  dbo.COMPANY 
+  JOIN CONTAINSTABLE(dbo.COMPANY, (PRIMARY_NAME, SECONDARY_NAME), 'Gerso ~ Leh') ft ON [KEY] = COMPANY_ID
+ORDER BY RANK DESC
+   
+```
