@@ -89,3 +89,28 @@ then search on it as if you're querying a table
 ```
 select * from dbo.sqlAutoComplete('Gerson Leh')
 ```
+
+This function can be used among all your auto complete functions to format search input terms
+```
+
+create function dbo.sqlAutoCompleteFormatInput (@searchTerm nvarchar(256))
+returns nvarchar(256)
+as 
+begin
+  -- sub special characters for spaces
+  SET @searchTerm = REPLACE(REPLACE(REPLACE(
+      @searchTerm
+      ,char(9), ' ')
+      ,char(10), ' ')
+      ,char(13), ' ');
+
+  -- get rid of multiple spaces
+  WHILE CHARINDEX('  ',@searchTerm) > 0
+    SET @searchTerm = REPLACE(@searchTerm, '  ', ' ')
+
+  -- sub out spaces for CONTAINS "NEAR" syntax
+  SET @searchTerm = replace(@searchTerm,' ', ' ~ ')
+  return @searchTerm
+end
+GO
+```
