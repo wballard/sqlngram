@@ -58,3 +58,34 @@ FROM
 ORDER BY RANK DESC
    
 ```
+
+
+##Using with Table Valued Functions
+create an auto complete table valued function
+
+```
+create function dbo.sqlAutoComplete (@searchTerm nvarchar(256))
+returns @results table (
+  COMPANY_ID INT
+  ,PRIMARY_NAME nvarchar(255)
+  ,SECONDARY_NAME nvarchar(255)
+  )
+AS 
+BEGIN
+  SET @searchTerm = REPLACE(@searchTerm,' ', ' ~ ');
+  
+  INSERT INTO @results
+  SELECT  COMPANY_ID
+      ,PRIMARY_NAME
+      ,SECONDARY_NAME
+  FROM  dbo.COMPANY 
+    JOIN CONTAINSTABLE(dbo.COMPANY, (PRIMARY_NAME, SECONDARY_NAME), @searchTerm ) ft ON [KEY] = COMPANY_ID
+  ORDER BY RANK DESC;
+  RETURN
+END
+```
+
+then search on it as if you're querying a table
+```
+select * from dbo.sqlAutoComplete('Gerson Leh')
+```
