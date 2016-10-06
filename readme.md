@@ -60,49 +60,21 @@ ORDER BY RANK DESC
 ```
 
 
-##Using with Table Valued Functions
-create an auto complete table valued function
+##Formatting your input
 
+This function can be used to turn your query string into a properly formatted search string
 ```
-create function dbo.sqlAutoComplete (@searchTerm nvarchar(256))
-returns @results table (
-  COMPANY_ID INT
-  ,PRIMARY_NAME nvarchar(255)
-  ,SECONDARY_NAME nvarchar(255)
-  )
-AS 
-BEGIN
-  SET @searchTerm = REPLACE(@searchTerm,' ', ' ~ ');
-  
-  INSERT INTO @results
-  SELECT  COMPANY_ID
-      ,PRIMARY_NAME
-      ,SECONDARY_NAME
-  FROM  dbo.COMPANY 
-    JOIN CONTAINSTABLE(dbo.COMPANY, (PRIMARY_NAME, SECONDARY_NAME), @searchTerm ) ft ON [KEY] = COMPANY_ID
-  ORDER BY RANK DESC;
-  RETURN
-END
-```
-
-then search on it as if you're querying a table
-```
-select * from dbo.sqlAutoComplete('Gerson Leh')
-```
-
-This function can be used among all your auto complete functions to format search input terms
-```
-
 create function dbo.sqlAutoCompleteFormatInput (@searchTerm nvarchar(256))
 returns nvarchar(256)
 as 
 begin
   -- sub special characters for spaces
-  SET @searchTerm = REPLACE(REPLACE(REPLACE(
+  SET @searchTerm = REPLACE(REPLACE(REPLACE(REPLACE(
       @searchTerm
       ,char(9), ' ')
       ,char(10), ' ')
-      ,char(13), ' ');
+      ,char(13), ' ')
+    ,'~', ' ');
 
   -- get rid of multiple spaces
   WHILE CHARINDEX('  ',@searchTerm) > 0
@@ -114,3 +86,17 @@ begin
 end
 GO
 ```
+
+Sample Usage:
+A limitation of the CONTAINSTABLE function is that the search string must be a string and cannot be a function, preventing us from using the function directly in the CONTAINSTABLE query
+```
+DECLARE @queryterm nvarchar(256) = dbo.sqlAutoCompleteFormatInput('Gerson NEARBY')
+
+SELECT 
+  PRIMARY_NAME, *
+FROM
+  dbo.COMPANY 
+  JOIN CONTAINSTABLE(dbo.COMPANY, (PRIMARY_NAME, SECONDARY_NAME),@queryterm) ft ON [KEY] = COMPANY_ID
+ORDER BY RANK DESC
+```
+
