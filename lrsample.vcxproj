@@ -115,6 +115,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="lrsample.DEF" />
+    <None Include="reload.bat" />
+    <None Include="test.bat" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lrsample.HXX" />

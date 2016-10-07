@@ -59,15 +59,21 @@ HRESULT STDMETHODCALLTYPE CSampleWordBreaker::BreakText(
 		int MIN_NGRAM_SIZE = 2;
         int NGRAM_SIZE = 3;
         long at = 0;
-		while (pTextSource->iCur + at + MIN_NGRAM_SIZE <= pTextSource->iEnd) {
+		while (pTextSource->iCur + at + NGRAM_SIZE <= pTextSource->iEnd) {
 			long pos = pTextSource->iCur + at;
 			//need to have a 'word', which is really just a character
-			hr = pWordSink->PutWord(MIN_NGRAM_SIZE,
+			hr = pWordSink->PutAltWord(MIN_NGRAM_SIZE,
 				&pTextSource->awcBuffer[pos],
 				MIN_NGRAM_SIZE,
 				pos);
 			if (FAILED(hr)) return hr;
+			hr = pWordSink->PutAltWord(NGRAM_SIZE,
+				&pTextSource->awcBuffer[pos],
+				NGRAM_SIZE,
+				pos);
+			if (FAILED(hr)) return hr;
 			//ngrams up to NGRAM_SIZE or until we run out of string
+			/*
 			for (int ngram_length = MIN_NGRAM_SIZE+1; ngram_length <= NGRAM_SIZE; ngram_length++) {
 				if (pos + ngram_length <= pTextSource->iEnd) {
 					hr = pWordSink->PutAltWord(ngram_length,
@@ -77,12 +83,11 @@ HRESULT STDMETHODCALLTYPE CSampleWordBreaker::BreakText(
 					if (FAILED(hr)) return hr;
 				}
 			}
+			*/
 
             at++;
         }
 
-		hr = pWordSink->PutBreak(WORDREP_BREAK_TYPE::WORDREP_BREAK_EOW);
-		if (FAILED(hr)) return hr;
 
         hr = pTextSource->pfnFillTextBuffer( pTextSource );
     } while ( SUCCEEDED( hr ) );
