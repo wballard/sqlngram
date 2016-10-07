@@ -8,7 +8,7 @@ Knowing how much folks just love building C++, I've checked in a built version.
 
 * Copy (./x64/Release/sqlngram.dll) to your SQL Server `BINN` folder 
 * Run (./register.sql)
-* *Not Entertaining**, search registry for `{d225281a-7ca9-4a46-ae7d-c63a9d4815d4}`, copy `DefaultData` to `(Default)`
+* *Not Entertaining**, search registry for `{0a275611-aa4d-4b39-8290-4baf77703f55}` `{d225281a-7ca9-4a46-ae7d-c63a9d4815d4}`, copy `DefaultData` to `(Default)`
   ***let me know if you can figure a way to automate writing the default value :) ***
 * Test
 ```
@@ -44,7 +44,15 @@ SELECT
   PRIMARY_NAME, *
 FROM
   dbo.COMPANY 
-  JOIN CONTAINSTABLE(dbo.COMPANY, (PRIMARY_NAME, SECONDARY_NAME), 'Gerso') ft ON [KEY] = COMPANY_ID
+  JOIN CONTAINSTABLE(dbo.COMPANY, (PRIMARY_NAME, SECONDARY_NAME), '"Gerso"') ft ON [KEY] = COMPANY_ID
+ORDER BY RANK DESC
+
+
+SELECT 
+  PRIMARY_NAME, *
+FROM
+  dbo.COMPANY 
+  JOIN CONTAINSTABLE(dbo.COMPANY, (PRIMARY_NAME, SECONDARY_NAME), '"Gerson Leh"') ft ON [KEY] = COMPANY_ID
 ORDER BY RANK DESC
 
 --or even, notice the 'words' separated by ~ that's the 'near operator'

@@ -18,6 +18,14 @@ CLSID CLSID_SampleWordBreaker = /* d225281a-7ca9-4a46-ae7d-c63a9d4815d4 */
     {0xae, 0x7d, 0xc6, 0x3a, 0x9d, 0x48, 0x15, 0xd4}
 };
 
+// The CLSID of the stemmer
+
+CLSID CLSID_SampleStemmer = /* 0a275611-aa4d-4b39-8290-4baf77703f55 */
+{
+	0x0a275611, 0xaa4d, 0x4b39,
+	{ 0x82, 0x90, 0x4b, 0xaf, 0x77, 0x70, 0x3f, 0x55 }
+};
+
 // Global module refcount
 
 long g_cInstances = 0;
@@ -56,35 +64,16 @@ HRESULT STDMETHODCALLTYPE CSampleWordBreaker::BreakText(
     HRESULT hr = pTextSource->pfnFillTextBuffer( pTextSource );
     do
     {
-		int MIN_NGRAM_SIZE = 2;
         int NGRAM_SIZE = 3;
         long at = 0;
 		while (pTextSource->iCur + at + NGRAM_SIZE <= pTextSource->iEnd) {
 			long pos = pTextSource->iCur + at;
 			//need to have a 'word', which is really just a character
-			hr = pWordSink->PutAltWord(MIN_NGRAM_SIZE,
-				&pTextSource->awcBuffer[pos],
-				MIN_NGRAM_SIZE,
-				pos);
-			if (FAILED(hr)) return hr;
-			hr = pWordSink->PutAltWord(NGRAM_SIZE,
+			hr = pWordSink->PutWord(NGRAM_SIZE,
 				&pTextSource->awcBuffer[pos],
 				NGRAM_SIZE,
 				pos);
 			if (FAILED(hr)) return hr;
-			//ngrams up to NGRAM_SIZE or until we run out of string
-			/*
-			for (int ngram_length = MIN_NGRAM_SIZE+1; ngram_length <= NGRAM_SIZE; ngram_length++) {
-				if (pos + ngram_length <= pTextSource->iEnd) {
-					hr = pWordSink->PutAltWord(ngram_length,
-						&pTextSource->awcBuffer[pos],
-						0,
-						pos);
-					if (FAILED(hr)) return hr;
-				}
-			}
-			*/
-
             at++;
         }
 
@@ -111,6 +100,44 @@ HRESULT STDMETHODCALLTYPE CSampleWordBreaker::BreakText(
 
 	return S_OK;
 } //BreakText
+
+  //+---------------------------------------------------------------------------
+  //
+  //  Member:     CSampleStemmer::GenerateWordForms
+  //
+  //  Synopsis:   From the input word, emit the original and alternate forms
+  //              of the word.
+  //
+  //  Arguments:  [pwcInBuf]   -- The original word to stem (not 0-terminated)
+  //              [cwc]        -- Length in characters of the word
+  //              [pStemSink]  -- Where to emit the stems
+  //
+  //  Returns:    S_OK if successful or an error code
+  //
+  //----------------------------------------------------------------------------
+
+HRESULT STDMETHODCALLTYPE CSampleStemmer::GenerateWordForms(
+	WCHAR const *   pwcInBuf,
+	ULONG           cwc,
+	IWordFormSink * pWordFormSink)
+{
+	// Validate the arguments
+
+	if ((0 == pwcInBuf) || (0 == pWordFormSink))
+		return E_INVALIDARG;
+
+	HRESULT hr = S_OK;
+	//bigrams as stems
+	long at = 0;
+	while (at < (cwc-1)) {
+		hr = pWordFormSink->PutWord(pwcInBuf+at, 2);
+		if (FAILED(hr)) return hr;
+		at++;
+	}
+
+	// Emit the original word
+	return pWordFormSink->PutWord(pwcInBuf, cwc);
+} //StemWord
 
 
 //+-------------------------------------------------------------------------
@@ -230,10 +257,12 @@ HRESULT STDMETHODCALLTYPE CLanguageResourceSampleCF::CreateInstance(
 {
     *ppvObject = 0;
 
-    if ( IID_IWordBreaker == riid )
-        *ppvObject = new CSampleWordBreaker();
-    else
-        return E_NOINTERFACE;
+	if (IID_IStemmer == riid)
+		*ppvObject = new CSampleStemmer();
+	else if (IID_IWordBreaker == riid)
+		*ppvObject = new CSampleWordBreaker();
+	else
+		return E_NOINTERFACE;
 
     if ( 0 == *ppvObject )
         return E_OUTOFMEMORY;
@@ -285,13 +314,14 @@ extern "C" HRESULT STDMETHODCALLTYPE DllGetClassObject(
     IUnknown * pUnk = 0;
     *ppvObj = 0;
 
-    if ( CLSID_SampleWordBreaker == cid )
-    {
-        pUnk = new CLanguageResourceSampleCF();
+	if (CLSID_SampleWordBreaker == cid ||
+		CLSID_SampleStemmer == cid)
+	{
+		pUnk = new CLanguageResourceSampleCF();
 
-        if ( 0 == pUnk )
-            return E_OUTOFMEMORY;
-    }
+		if (0 == pUnk)
+			return E_OUTOFMEMORY;
+	}
     else
     {
         *ppvObj = 0;

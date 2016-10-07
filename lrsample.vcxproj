@@ -115,6 +115,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="lrsample.DEF" />
+    <None Include="readme.md" />
     <None Include="reload.bat" />
     <None Include="test.bat" />
   </ItemGroup>
