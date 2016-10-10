@@ -1,4 +1,4 @@
-LIBRARY lrsample
+LIBRARY sqlngram
 
 EXPORTS
     DllCanUnloadNow     PRIVATE

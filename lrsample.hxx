@@ -19,15 +19,6 @@
 
 extern long g_cInstances;
 
-// Invent a new sublanguage of English -- English Sample
-
-const ULONG SUBLANG_ENGLISH_SAMPLE = 0x13;
-
-// Unicode zero width space
-
-const WCHAR ZERO_WIDTH_SPACE = 0x200B;
-
-
 // Standard COM exports
 
 extern "C" HRESULT STDMETHODCALLTYPE DllGetClassObject( REFCLSID cid,
@@ -166,19 +157,10 @@ public:
 
 private:
 
-    HRESULT Tokenize( TEXT_SOURCE * pTextSource,
-                      IWordSink *   pWordSink,
-                      long          shingle );
-
     ~CSampleWordBreaker()
     {
         InterlockedDecrement( &g_cInstances );
     }
-
-    enum _EBufSize
-    {
-        cwcAtATime = 500
-    };
 
     long _cRefs;
 
@@ -258,7 +240,7 @@ public:
 		if (0 == ppwcsLicense)
 			return E_INVALIDARG;
 
-		*ppwcsLicense = L"Copyright Microsoft, 1991-2001";
+		*ppwcsLicense = L"APL";
 		return S_OK;
 	}
 

@@ -11,8 +11,8 @@
 #include <winver.h>
 
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION     1,0,0,1
-PRODUCTVERSION  1,0,0,1
+FILEVERSION     1,0,0,2
+PRODUCTVERSION  1,0,0,2
 FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
 FILEFLAGS       (VS_FF_PRIVATEBUILD|VS_FF_PRERELEASE|VS_FF_DEBUG)
 FILEOS          VOS_NT_WINDOWS32
@@ -24,13 +24,13 @@ BEGIN
   BEGIN
     BLOCK "040904B0"
     BEGIN
-      VALUE "CompanyName",     "Microsoft Corporation\0"
-      VALUE "FileDescription", "Sample Language Resources\0"
+      VALUE "CompanyName",     "GLG\0"
+      VALUE "FileDescription", "SQL NGRAM Breaker/Stemmer\0"
       VALUE "FileVersion",     "1.0\0"
-      VALUE "InternalName",    "lrsample.dll\0"
-      VALUE "LegalCopyright",  "Copyright 2001 - 2001 Microsoft Corp.\0"
-      VALUE "LegalTrademarks", "Microsoft\256 is a registered trademark of Microsoft Corporation. Windows(TM) and Windows NT(TM) are trademarks of Microsoft Corporation.\0"
-      VALUE "ProductName",     "Platform SDK\0"
+      VALUE "InternalName",    "sqlngram.dll\0"
+      VALUE "LegalCopyright",  "Copyright 2016 GLG\0"
+      VALUE "LegalTrademarks", "\0"
+      VALUE "ProductName",     "SQLNGRAM\0"
       VALUE "ProductVersion",  "1.0\0"
     END
   END

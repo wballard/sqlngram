@@ -1,5 +1,4 @@
 ﻿  lrsample.CXX
      Creating library C:\Users\Administrator\Documents\GitHub\sqlngram\x64\Debug\sqlngram.lib and object C:\Users\Administrator\Documents\GitHub\sqlngram\x64\Debug\sqlngram.exp
-sqlngram.exp : warning LNK4070: /OUT:lrsample.dll directive in .EXP differs from output filename 'C:\Users\Administrator\Documents\GitHub\sqlngram\x64\Debug\sqlngram.dll'; ignoring directive
   lrsample.vcxproj -> C:\Users\Administrator\Documents\GitHub\sqlngram\x64\Debug\sqlngram.dll
   lrsample.vcxproj -> C:\Users\Administrator\Documents\GitHub\sqlngram\x64\Debug\sqlngram.pdb (Partial PDB)
