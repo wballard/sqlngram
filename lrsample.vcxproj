@@ -104,16 +104,23 @@
     <Link>
       <ModuleDefinitionFile>./lrsample.def</ModuleDefinitionFile>
     </Link>
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Link>
       <ModuleDefinitionFile>./lrsample.def</ModuleDefinitionFile>
     </Link>
+    <ClCompile>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="lrsample.CXX" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="install.bat" />
     <None Include="lrsample.DEF" />
     <None Include="readme.md" />
     <None Include="reload.bat" />

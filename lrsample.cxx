@@ -128,7 +128,7 @@ HRESULT STDMETHODCALLTYPE CSampleStemmer::GenerateWordForms(
 
 	HRESULT hr = S_OK;
 	//bigrams as stems
-	long at = 0;
+	ULONG at = 0;
 	while (at < (cwc-1)) {
 		hr = pWordFormSink->PutWord(pwcInBuf+at, 2);
 		if (FAILED(hr)) return hr;
